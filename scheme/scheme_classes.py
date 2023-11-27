@@ -27,16 +27,16 @@ class Frame:
 
     def define(self, symbol, value):
         """Define Scheme SYMBOL to have VALUE."""
-        # BEGIN PROBLEM 1
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 1
+        self.bindings[symbol] = value
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL. Errors if SYMBOL is not found."""
-        # BEGIN PROBLEM 1
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 1
-        raise SchemeError('unknown identifier: {0}'.format(symbol))
+        if symbol in self.bindings:
+            return self.bindings[symbol]
+        elif self.parent is not None:
+            return self.parent.lookup(symbol)
+        else:
+            raise SchemeError('unknown identifier: {0}'.format(symbol))
 
     def make_child_frame(self, formals, vals):
         """Return a new local frame whose parent is SELF, in which the symbols
@@ -51,9 +51,11 @@ class Frame:
         """
         if len(formals) != len(vals):
             raise SchemeError('Incorrect number of arguments to function call')
-        # BEGIN PROBLEM 8
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 8
+        child_frame = Frame(self)
+        while formals is not nil:
+            child_frame.define(formals.first, vals.first)
+            formals, vals = formals.rest, vals.rest
+        return child_frame
 
 ##############
 # Procedures #
